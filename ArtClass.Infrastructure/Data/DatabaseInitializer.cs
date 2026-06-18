@@ -8,7 +8,7 @@ public static class DatabaseInitializer
 {
     public static async Task InitializeAsync(ArtClassDbContext context, CancellationToken cancellationToken = default)
     {
-        await context.Database.EnsureCreatedAsync(cancellationToken);
+        await context.Database.MigrateAsync(cancellationToken);
 
         if (await context.Lessons.AnyAsync(cancellationToken))
         {
