@@ -15,6 +15,12 @@ public class ArtClassDbContext(DbContextOptions<ArtClassDbContext> options) : Db
 
     public DbSet<Lesson> Lessons => Set<Lesson>();
 
+    public DbSet<Student> Students => Set<Student>();
+
+    public DbSet<StudentStudyGroup> StudentStudyGroups => Set<StudentStudyGroup>();
+
+    public DbSet<ScheduleSettings> ScheduleSettings => Set<ScheduleSettings>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ArtClassDbContext).Assembly);

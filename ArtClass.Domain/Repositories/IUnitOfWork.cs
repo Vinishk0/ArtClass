@@ -6,9 +6,13 @@ public interface IUnitOfWork
 {
     ILessonRepository Lessons { get; }
 
+    IStudentRepository Students { get; }
+
+    IScheduleSettingsRepository ScheduleSettings { get; }
+
     IRepository<Teacher> Teachers { get; }
 
-    IRepository<StudyGroup> StudyGroups { get; }
+    IStudyGroupRepository StudyGroups { get; }
 
     IRepository<Subject> Subjects { get; }
 

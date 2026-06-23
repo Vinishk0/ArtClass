@@ -8,9 +8,14 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
+                <ResourceDictionary Source="Resources/Styles/Typography.xaml" />
+                <ResourceDictionary Source="Resources/Styles/Components.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+            <converters:HexToColorConverter x:Key="HexToColorConverter" />
+            <converters:IsNotEmptyConverter x:Key="IsNotEmptyConverter" />
+            <converters:SelectionFillConverter x:Key="SelectionFillConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

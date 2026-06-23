@@ -26,5 +26,15 @@ public class Lesson : Entity
 
     public TimeOnly EndTime { get; set; }
 
+    /// <summary>
+    /// Week 1 or 2 within the repeating cycle. Null for one-time lessons.
+    /// </summary>
+    public int? CycleWeek { get; set; }
+
+    /// <summary>
+    /// Set for one-time extra lessons (StudyGroup.IsRepeating = false).
+    /// </summary>
+    public DateOnly? SpecificDate { get; set; }
+
     public string? Notes { get; set; }
 }

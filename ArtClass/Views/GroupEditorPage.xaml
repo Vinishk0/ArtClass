@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:ArtClass.ViewModels"
+             x:Class="ArtClass.Views.GroupEditorPage"
+             x:Name="PageRoot"
+             x:DataType="vm:GroupEditorViewModel"
+             Title="Группа">
+
+    <Grid RowDefinitions="Auto,*,Auto" Padding="20,16,20,16" Style="{StaticResource PageRoot}">
+
+        <VerticalStackLayout Grid.Row="0" Spacing="8" Margin="0,0,0,12">
+            <Label Text="{Binding PageTitle}" Style="{StaticResource TitleLarge}" />
+            <Border Style="{StaticResource Badge}" HorizontalOptions="Start">
+                <Label Text="{Binding StepIndicator}"
+                       FontSize="12"
+                       FontFamily="OpenSansSemibold"
+                       TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
+            </Border>
+            <Label Text="{Binding StatusMessage}"
+                   Style="{StaticResource BodySecondary}"
+                   TextColor="{StaticResource Danger}"
+                   IsVisible="{Binding StatusMessage, Converter={StaticResource IsNotEmptyConverter}}" />
+        </VerticalStackLayout>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="16">
+
+                <Border Style="{StaticResource Card}" IsVisible="{Binding IsStep1}">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Основное" Style="{StaticResource Overline}" />
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Название группы" Style="{StaticResource Caption}" />
+                            <Border StrokeThickness="0"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource SurfaceElevatedDark}}"
+                                    StrokeShape="RoundRectangle 12"
+                                    Padding="14,4">
+                                <Entry Text="{Binding Name}" Placeholder="Например: Акварель" />
+                            </Border>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Описание" Style="{StaticResource Caption}" />
+                            <Border StrokeThickness="0"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource SurfaceElevatedDark}}"
+                                    StrokeShape="RoundRectangle 12"
+                                    Padding="14,8">
+                                <Editor Text="{Binding Description}"
+                                        Placeholder="Возраст, уровень..."
+                                        AutoSize="TextChanges"
+                                        MinimumHeightRequest="80" />
+                            </Border>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Цвет группы" Style="{StaticResource Caption}" />
+                            <CollectionView ItemsSource="{Binding ColorSwatches}"
+                                            HeightRequest="56"
+                                            SelectionMode="None">
+                                <CollectionView.ItemsLayout>
+                                    <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10" />
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:ColorSwatchItem">
+                                        <Border WidthRequest="44"
+                                                HeightRequest="44"
+                                                StrokeThickness="3"
+                                                Stroke="{Binding StrokeColor}"
+                                                StrokeShape="RoundRectangle 22"
+                                                BackgroundColor="{Binding Hex, Converter={StaticResource HexToColorConverter}}">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding Path=BindingContext.SelectColorCommand, Source={x:Reference PageRoot}}"
+                                                                      CommandParameter="{Binding .}" />
+                                            </Border.GestureRecognizers>
+                                        </Border>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource Card}" IsVisible="{Binding IsStep2}">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Расписание" Style="{StaticResource Overline}" />
+
+                        <VerticalStackLayout IsVisible="{Binding IsExtraMode}" Spacing="12">
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="Дата" Style="{StaticResource Caption}" />
+                                <DatePicker Date="{Binding LessonDate}" />
+                            </VerticalStackLayout>
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                                <VerticalStackLayout Grid.Column="0" Spacing="6">
+                                    <Label Text="Начало" Style="{StaticResource Caption}" />
+                                    <TimePicker Time="{Binding StartTime}" />
+                                </VerticalStackLayout>
+                                <VerticalStackLayout Grid.Column="1" Spacing="6">
+                                    <Label Text="Конец" Style="{StaticResource Caption}" />
+                                    <TimePicker Time="{Binding EndTime}" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout IsVisible="{Binding IsRepeatingGroupFlow}" Spacing="12">
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="Повтор" Style="{StaticResource Caption}" />
+                                <Picker ItemsSource="{Binding RepeatModes}"
+                                        SelectedIndex="{Binding SelectedRepeatModeIndex}" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="День недели" Style="{StaticResource Caption}" />
+                                <Picker ItemsSource="{Binding Days}" SelectedIndex="{Binding SelectedDayIndex}" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Spacing="6" IsVisible="{Binding IsBiWeekly}">
+                                <Label Text="Неделя цикла" Style="{StaticResource Caption}" />
+                                <Picker ItemsSource="{Binding CycleWeeks}" SelectedIndex="{Binding SelectedCycleWeekIndex}" />
+                            </VerticalStackLayout>
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                                <VerticalStackLayout Grid.Column="0" Spacing="6">
+                                    <Label Text="Начало" Style="{StaticResource Caption}" />
+                                    <TimePicker Time="{Binding StartTime}" />
+                                </VerticalStackLayout>
+                                <VerticalStackLayout Grid.Column="1" Spacing="6">
+                                    <Label Text="Конец" Style="{StaticResource Caption}" />
+                                    <TimePicker Time="{Binding EndTime}" />
+                                </VerticalStackLayout>
+                            </Grid>
+                            <Button Text="＋ Добавить слот"
+                                    Style="{StaticResource SecondaryButton}"
+                                    Command="{Binding AddSlotCommand}" />
+                            <CollectionView ItemsSource="{Binding Slots}">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:SlotEditorItem">
+                                        <Grid ColumnDefinitions="*,Auto" Padding="6,8">
+                                            <Label Grid.Column="0"
+                                                   Text="{Binding Label}"
+                                                   Style="{StaticResource Body}"
+                                                   VerticalOptions="Center" />
+                                            <Button Grid.Column="1"
+                                                    Text="✕"
+                                                    Style="{StaticResource GhostButton}"
+                                                    WidthRequest="40"
+                                                    HeightRequest="40"
+                                                    Command="{Binding Path=BindingContext.RemoveSlotCommand, Source={x:Reference PageRoot}}"
+                                                    CommandParameter="{Binding .}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource Card}" IsVisible="{Binding IsStep3}">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Ученики" Style="{StaticResource Overline}" />
+                        <SearchBar Text="{Binding SearchQuery}"
+                                   Placeholder="Введите имя..."
+                                   Style="{StaticResource SearchField}" />
+                        <CollectionView ItemsSource="{Binding FilteredStudents}"
+                                        SelectionMode="None"
+                                        MaximumHeightRequest="400">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="vm:SelectableItemViewModel">
+                                    <Grid ColumnDefinitions="Auto,*"
+                                          Padding="10,12"
+                                          ColumnSpacing="12">
+                                        <Grid.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.ToggleStudentCommand, Source={x:Reference PageRoot}}"
+                                                                  CommandParameter="{Binding .}" />
+                                        </Grid.GestureRecognizers>
+                                        <Border Grid.Column="0"
+                                                WidthRequest="28"
+                                                HeightRequest="28"
+                                                StrokeThickness="2"
+                                                Stroke="{AppThemeBinding Light={StaticResource Border}, Dark={StaticResource BorderDark}}"
+                                                StrokeShape="RoundRectangle 14"
+                                                BackgroundColor="{Binding IsSelected, Converter={StaticResource SelectionFillConverter}}"
+                                                VerticalOptions="Center">
+                                            <Label Text="✓"
+                                                   FontSize="12"
+                                                   TextColor="White"
+                                                   HorizontalOptions="Center"
+                                                   VerticalOptions="Center"
+                                                   IsVisible="{Binding IsSelected}" />
+                                        </Border>
+                                        <Label Grid.Column="1"
+                                               Text="{Binding Name}"
+                                               Style="{StaticResource Body}"
+                                               VerticalOptions="Center" />
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <VerticalStackLayout Grid.Row="2" Spacing="10" Margin="0,12,0,0">
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10" IsVisible="{Binding IsStep1}">
+                <Button Grid.Column="1" Text="Далее →" Style="{StaticResource PrimaryButton}" Command="{Binding NextStepCommand}" />
+            </Grid>
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10" IsVisible="{Binding IsStep2}">
+                <Button Grid.Column="0" Text="← Назад" Style="{StaticResource GhostButton}" Command="{Binding BackStepCommand}" />
+                <Button Grid.Column="1" Text="Далее →" Style="{StaticResource PrimaryButton}" Command="{Binding NextStepCommand}" />
+            </Grid>
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10" IsVisible="{Binding IsStep3}">
+                <Button Grid.Column="0" Text="← Назад" Style="{StaticResource GhostButton}" Command="{Binding BackStepCommand}" />
+                <Button Grid.Column="1" Text="Сохранить" Style="{StaticResource PrimaryButton}" Command="{Binding SaveCommand}" />
+            </Grid>
+            <Button Text="{Binding DeleteButtonText}"
+                    Style="{StaticResource DangerButton}"
+                    Command="{Binding DeleteCommand}"
+                    IsVisible="{Binding IsEditMode}" />
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

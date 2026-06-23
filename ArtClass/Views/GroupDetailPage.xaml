@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:ArtClass.ViewModels"
+             x:Class="ArtClass.Views.GroupDetailPage"
+             x:DataType="vm:GroupDetailViewModel"
+             Title="Группа">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Изменить" Command="{Binding EditCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,16,20,32" Spacing="16" Style="{StaticResource PageRoot}">
+
+            <Border Style="{StaticResource Card}">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                    <Border Grid.Column="0"
+                            WidthRequest="48"
+                            HeightRequest="48"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 14"
+                            BackgroundColor="{Binding Color, Converter={StaticResource HexToColorConverter}}"
+                            VerticalOptions="Start" />
+                    <VerticalStackLayout Grid.Column="1" Spacing="6">
+                        <Label Text="{Binding Name}" Style="{StaticResource TitleLarge}" />
+                        <Border Style="{StaticResource Badge}" HorizontalOptions="Start">
+                            <Label Text="{Binding TypeLabel}"
+                                   FontSize="11"
+                                   FontFamily="OpenSansSemibold"
+                                   TextColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource SecondaryDark}}" />
+                        </Border>
+                        <Label Text="{Binding Description}"
+                               Style="{StaticResource BodySecondary}"
+                               Margin="0,4,0,0" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <VerticalStackLayout Spacing="10">
+                <Label Text="Расписание" Style="{StaticResource Overline}" />
+                <Border Style="{StaticResource CardCompact}">
+                    <CollectionView ItemsSource="{Binding Slots}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="x:String">
+                                <Grid ColumnDefinitions="Auto,*" Padding="4,6" ColumnSpacing="10">
+                                    <Label Grid.Column="0" Text="◷" FontSize="14"
+                                           TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                                           VerticalOptions="Center" />
+                                    <Label Grid.Column="1" Text="{Binding .}" Style="{StaticResource Body}" VerticalOptions="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </Border>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="10">
+                <Label Text="Ученики" Style="{StaticResource Overline}" />
+                <Border Style="{StaticResource CardCompact}">
+                    <CollectionView ItemsSource="{Binding Students}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="x:String">
+                                <Grid ColumnDefinitions="Auto,*" Padding="4,6" ColumnSpacing="10">
+                                    <Label Grid.Column="0" Text="●"
+                                           FontSize="10"
+                                           TextColor="{AppThemeBinding Light={StaticResource Accent}, Dark={StaticResource AccentDark}}"
+                                           VerticalOptions="Center" />
+                                    <Label Grid.Column="1" Text="{Binding .}" Style="{StaticResource Body}" VerticalOptions="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </Border>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

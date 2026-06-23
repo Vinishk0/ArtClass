@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:ArtClass.ViewModels"
+             x:Class="ArtClass.Views.GroupsPage"
+             x:Name="PageRoot"
+             x:DataType="vm:GroupsViewModel"
+             Title="Группы">
+
+    <Grid RowDefinitions="Auto,Auto,*" Padding="20,16,20,8" Style="{StaticResource PageRoot}">
+
+        <VerticalStackLayout Grid.Row="0" Spacing="4" Margin="0,0,0,16">
+            <Label Text="Студия" Style="{StaticResource Overline}" />
+            <Label Text="Группы" Style="{StaticResource Display}" />
+            <Label Text="Постоянные группы и разовые уроки"
+                   Style="{StaticResource BodySecondary}" />
+        </VerticalStackLayout>
+
+        <VerticalStackLayout Grid.Row="1" Spacing="10" Margin="0,0,0,12">
+            <SearchBar Text="{Binding SearchQuery}"
+                       Placeholder="Поиск по названию..."
+                       Style="{StaticResource SearchField}" />
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                <Button Grid.Column="0"
+                        Text="＋ Группа"
+                        Style="{StaticResource PrimaryButton}"
+                        Command="{Binding CreateGroupCommand}" />
+                <Button Grid.Column="1"
+                        Text="✦ Мастеркласс"
+                        Style="{StaticResource SecondaryButton}"
+                        Command="{Binding CreateExtraCommand}" />
+            </Grid>
+        </VerticalStackLayout>
+
+        <RefreshView Grid.Row="2"
+                     Command="{Binding LoadCommand}">
+            <CollectionView ItemsSource="{Binding Groups}"
+                            SelectionMode="None"
+                            ItemSizingStrategy="MeasureFirstItem">
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout Padding="32" Spacing="12" VerticalOptions="Center">
+                        <Label Text="🎨" Style="{StaticResource EmptyStateIcon}" />
+                        <Label Text="Пока нет групп"
+                               Style="{StaticResource TitleMedium}"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="Создайте первую группу или разовый урок"
+                               Style="{StaticResource BodySecondary}"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:GroupListItemViewModel">
+                        <Border Style="{StaticResource CardCompact}" Margin="0,0,0,10">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Path=BindingContext.OpenGroupCommand, Source={x:Reference PageRoot}}"
+                                                      CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="6,*,Auto" ColumnSpacing="14">
+                                <BoxView Grid.Column="0"
+                                         Color="{Binding Color, Converter={StaticResource HexToColorConverter}}"
+                                         WidthRequest="6"
+                                         CornerRadius="3"
+                                         VerticalOptions="Fill" />
+                                <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                                    <Label Text="{Binding Name}" Style="{StaticResource TitleSmall}" />
+                                    <Label Text="{Binding Subtitle}" Style="{StaticResource Caption}" />
+                                </VerticalStackLayout>
+                                <Border Grid.Column="2"
+                                        Style="{StaticResource Badge}"
+                                        VerticalOptions="Center">
+                                    <Label Text="{Binding TypeLabel}"
+                                           FontSize="11"
+                                           FontFamily="OpenSansSemibold"
+                                           TextColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource SecondaryDark}}" />
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</ContentPage>

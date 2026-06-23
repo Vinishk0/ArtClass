@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:ArtClass.ViewModels"
+             x:Class="ArtClass.Views.DayDetailPage"
+             x:Name="PageRoot"
+             x:DataType="vm:DayDetailViewModel"
+             Title="День">
+
+    <Grid RowDefinitions="Auto,*" Padding="20,16,20,8" Style="{StaticResource PageRoot}">
+
+        <VerticalStackLayout Grid.Row="0" Spacing="4" Margin="0,0,0,16">
+            <Label Text="Расписание на день" Style="{StaticResource Overline}" />
+            <Label Text="{Binding Title}" Style="{StaticResource TitleLarge}" />
+        </VerticalStackLayout>
+
+        <Grid Grid.Row="1">
+            <CollectionView ItemsSource="{Binding Lessons}"
+                            SelectionMode="None"
+                            ItemSizingStrategy="MeasureFirstItem">
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout Padding="32" Spacing="12" VerticalOptions="Center">
+                        <Label Text="☀️" Style="{StaticResource EmptyStateIcon}" />
+                        <Label Text="Свободный день"
+                               Style="{StaticResource TitleMedium}"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="На этот день занятий не запланировано"
+                               Style="{StaticResource BodySecondary}"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:LessonItemViewModel">
+                        <Border Style="{StaticResource CardCompact}" Margin="0,0,0,10">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Path=BindingContext.OpenLessonCommand, Source={x:Reference PageRoot}}"
+                                                      CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="6,*" ColumnSpacing="14">
+                                <BoxView Grid.Column="0"
+                                         Color="{Binding GroupColor, Converter={StaticResource HexToColorConverter}}"
+                                         WidthRequest="6"
+                                         CornerRadius="3"
+                                         VerticalOptions="Fill" />
+                                <VerticalStackLayout Grid.Column="1" Spacing="6">
+                                    <HorizontalStackLayout Spacing="10">
+                                        <Label Text="{Binding TimeRange}"
+                                               FontFamily="OpenSansSemibold"
+                                               FontSize="15"
+                                               TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
+                                        <Border Style="{StaticResource Badge}"
+                                                IsVisible="{Binding Badge, Converter={StaticResource IsNotEmptyConverter}}">
+                                            <Label Text="{Binding Badge}"
+                                                   FontSize="11"
+                                                   FontFamily="OpenSansSemibold"
+                                                   TextColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource SecondaryDark}}" />
+                                        </Border>
+                                    </HorizontalStackLayout>
+                                    <Label Text="{Binding Title}" Style="{StaticResource TitleSmall}" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+    </Grid>
+</ContentPage>

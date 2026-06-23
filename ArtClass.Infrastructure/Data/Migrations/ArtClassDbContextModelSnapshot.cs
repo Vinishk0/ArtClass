@@ -45,6 +45,9 @@ namespace ArtClass.Infrastructure.Data.Migrations
                     b.Property<int>("ClassroomId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("CycleWeek")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("DayOfWeek")
                         .HasColumnType("INTEGER");
 
@@ -53,6 +56,9 @@ namespace ArtClass.Infrastructure.Data.Migrations
 
                     b.Property<string>("Notes")
                         .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly?>("SpecificDate")
                         .HasColumnType("TEXT");
 
                     b.Property<TimeOnly>("StartTime")
@@ -71,6 +77,8 @@ namespace ArtClass.Infrastructure.Data.Migrations
 
                     b.HasIndex("ClassroomId");
 
+                    b.HasIndex("SpecificDate");
+
                     b.HasIndex("StudyGroupId");
 
                     b.HasIndex("SubjectId");
@@ -82,6 +90,58 @@ namespace ArtClass.Infrastructure.Data.Migrations
                     b.ToTable("Lessons");
                 });
 
+            modelBuilder.Entity("ArtClass.Domain.Entities.ScheduleSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateOnly>("CycleStartDate")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ScheduleSettings");
+                });
+
+            modelBuilder.Entity("ArtClass.Domain.Entities.Student", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("Age")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(30)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Students");
+                });
+
+            modelBuilder.Entity("ArtClass.Domain.Entities.StudentStudyGroup", b =>
+                {
+                    b.Property<int>("StudentId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("StudyGroupId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("StudentId", "StudyGroupId");
+
+                    b.HasIndex("StudyGroupId");
+
+                    b.ToTable("StudentStudyGroups");
+                });
+
             modelBuilder.Entity("ArtClass.Domain.Entities.StudyGroup", b =>
                 {
                     b.Property<int>("Id")
@@ -91,6 +151,23 @@ namespace ArtClass.Infrastructure.Data.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(500)
                         .HasColumnType("TEXT");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(9)
+                        .HasColumnType("TEXT")
+                        .HasDefaultValue("#C45C3E");
+
+                    b.Property<bool>("IsBiWeekly")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("IsRepeating")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -173,14 +250,40 @@ namespace ArtClass.Infrastructure.Data.Migrations
                     b.Navigation("Teacher");
                 });
 
+            modelBuilder.Entity("ArtClass.Domain.Entities.StudentStudyGroup", b =>
+                {
+                    b.HasOne("ArtClass.Domain.Entities.Student", "Student")
+                        .WithMany("GroupEnrollments")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ArtClass.Domain.Entities.StudyGroup", "StudyGroup")
+                        .WithMany("StudentEnrollments")
+                        .HasForeignKey("StudyGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+
+                    b.Navigation("StudyGroup");
+                });
+
             modelBuilder.Entity("ArtClass.Domain.Entities.Classroom", b =>
                 {
                     b.Navigation("Lessons");
                 });
 
+            modelBuilder.Entity("ArtClass.Domain.Entities.Student", b =>
+                {
+                    b.Navigation("GroupEnrollments");
+                });
+
             modelBuilder.Entity("ArtClass.Domain.Entities.StudyGroup", b =>
                 {
                     b.Navigation("Lessons");
+
+                    b.Navigation("StudentEnrollments");
                 });
 
             modelBuilder.Entity("ArtClass.Domain.Entities.Subject", b =>

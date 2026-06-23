@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:ArtClass.ViewModels"
+             x:Class="ArtClass.Views.StudentsPage"
+             x:Name="PageRoot"
+             x:DataType="vm:StudentsViewModel"
+             Title="Ученики">
+
+    <Grid RowDefinitions="Auto,Auto,*" Padding="20,16,20,8" Style="{StaticResource PageRoot}">
+
+        <VerticalStackLayout Grid.Row="0" Spacing="4" Margin="0,0,0,16">
+            <Label Text="Студия" Style="{StaticResource Overline}" />
+            <Label Text="Ученики" Style="{StaticResource Display}" />
+            <Label Text="Все ученики и их группы"
+                   Style="{StaticResource BodySecondary}" />
+        </VerticalStackLayout>
+
+        <VerticalStackLayout Grid.Row="1" Spacing="10" Margin="0,0,0,12">
+            <SearchBar Text="{Binding SearchQuery}"
+                       Placeholder="Поиск по имени..."
+                       Style="{StaticResource SearchField}" />
+            <Button Text="＋ Добавить ученика"
+                    Style="{StaticResource PrimaryButton}"
+                    Command="{Binding AddStudentCommand}" />
+        </VerticalStackLayout>
+
+        <RefreshView Grid.Row="2"
+                     Command="{Binding LoadCommand}">
+            <CollectionView ItemsSource="{Binding Students}"
+                            SelectionMode="None"
+                            ItemSizingStrategy="MeasureFirstItem">
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout Padding="32" Spacing="12" VerticalOptions="Center">
+                        <Label Text="👤" Style="{StaticResource EmptyStateIcon}" />
+                        <Label Text="Список пуст"
+                               Style="{StaticResource TitleMedium}"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="Добавьте первого ученика"
+                               Style="{StaticResource BodySecondary}"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:StudentListItemViewModel">
+                        <Border Style="{StaticResource CardCompact}" Margin="0,0,0,10">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Path=BindingContext.OpenStudentCommand, Source={x:Reference PageRoot}}"
+                                                      CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                                <Border Grid.Column="0"
+                                        WidthRequest="44"
+                                        HeightRequest="44"
+                                        StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 22"
+                                        BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryMuted}, Dark={StaticResource PrimaryMutedDark}}"
+                                        VerticalOptions="Center">
+                                    <Label Text="{Binding Initials}"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="15"
+                                           TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                                    <Label Text="{Binding Name}" Style="{StaticResource TitleSmall}" />
+                                    <Label Text="{Binding Subtitle}" Style="{StaticResource Caption}" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</ContentPage>
